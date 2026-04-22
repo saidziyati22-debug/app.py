@@ -1,61 +1,47 @@
 import streamlit as st
 import google.generativeai as genai
 
-# 1. إعدادات الصفحة (العنوان والأيقونة)
-st.set_page_config(page_title="Gemini AI Morocco", page_icon="🇲🇦")
+# إعدادات الصفحة
+st.set_page_config(page_title="سعد الزياتي AI", page_icon="🤖")
 
-# 2. جلب الـ API Key من Secrets وتأمين الاتصال
+# الساروت (ضروري يكون ف Secrets)
 if "GOOGLE_API_KEY" not in st.secrets:
-    st.error("❌ الساروت (API Key) ناقص! زيد 'AIzaSyAUYVOf6x09hpNaHQvJ-Yqo4GjTtq2ac8o' في Secrets عاد كمل.")
+    st.error("زيد الساروت ف Secrets أولا!")
     st.stop()
 
-genai.configure(api_key=st.secrets["AIzaSyAUYVOf6x09hpNaHQvJ-Yqo4GjTtq2ac8o"])
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
-# 3. تحديد شخصية البوت (هنا كتقرر كيفاش يجاوب الناس)
-# تقدر تبدل هاد النص باش تردو كايجاوب كيف بغيتي
-instruction = "أنت مساعد ذكاء اصطناعي سميتك 'Gemini المغرب'. كتحضر مع الناس بالدارجة المغربية، كتساعدهم في كاع المجالات، وكتكون ظريف ومؤدب."
-
+# تحديد الشخصية (System Instruction)
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    system_instruction=instruction
+    model_name='gemini-1.5-flash',
+    system_instruction="أنت ذكاء اصطناعي خاص بسعد الزياتي. جاوب بذكاء وبالدارجة المغربية."
 )
 
-# 4. إعداد ذاكرة المحادثة (باش ما ينساش شنو قلتي ليه)
+st.title("🤖 مساعد سعد الزياتي الذكي")
+
+# ذاكرة المحادثة
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# 5. عرض الرسائل القديمة في الصفحة
+# عرض الشات القديم
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 6. خانة الشات (فين كيكتب المستعمل)
-if prompt := st.chat_input("بشنو نقدر نعاونك اليوم؟"):
-    
-    # أ- عرض وحفظ ميساج المستعمل
+# فين بنادم كايكتب سؤاله
+if prompt := st.chat_input("بشنو نقدر نعاونك؟"):
+    # سجل ميساج المستعمل
+    st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
-    st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # ب- توليد الجواب من عقل Gemini
+    # جواب البوت
     with st.chat_message("assistant"):
         try:
-            # كنجمعو التاريخ ديال الهضرة باش البوت يفهم السياق
-            # استعملنا طريقة بسيطة باش يجاوب على آخر سؤال مع فهم اللي فات
+            # هنا البوت كايقرا السؤال وكايجاوب
             response = model.generate_content(prompt)
-            
-            answer = response.text
-            st.markdown(answer)
-            
-            # ج- حفظ جواب البوت في الذاكرة
-            st.session_state.messages.append({"role": "assistant", "content": answer})
-            
+            st.markdown(response.text)
+            # سجل جواب البوت ف الذاكرة
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
         except Exception as e:
-            st.error(f"وقع مشكل تقني: {e}")
-
-# 7. زر في الجنب لمسح الشات (Sidebar)
-with st.sidebar:
-    st.title("الإعدادات")
-    if st.button("مسح المحادثة 🗑️"):
-        st.session_state.messages = []
-        st.rerun()
+            st.error("كاين شي مشكل ف الكونيكسيون، حاول مرة أخرى.")
