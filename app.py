@@ -1,8 +1,15 @@
+
 import streamlit as st
 import google.generativeai as genai
 
-# إعداد الساروت (API KEY) - غتاخدو فابور من Google AI Studio
-genai.configure(api_key="YOUR_API_KEY_HERE")
+# 1. أحسن حاجة تجبد الـ Key من Secrets
+# إيلا بغيتي تجرب غير ف الجهاز ديالك، خلي الكي ديالك بلاصة st.secrets
+try:
+    API_KEY = st.secrets["GOOGLE_API_KEY"]
+except:
+    API_KEY = "AIzaSyAUYVOf6x09hpNaHQvJ-Yqo4GjTtq2ac8o" # الكي ديالك
+
+genai.configure(api_key=API_KEY)
 
 st.title("My AI Assistant 🤖")
 st.write("مرحباً! أنا ذكاء اصطناعي خاص بسعد الزياتي..")
@@ -19,10 +26,19 @@ if prompt := st.chat_input("Ask me anything..."):
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # هنا كينادي السيت على عقل Gemini
-    model = genai.GenerativeModel('gemini-pro')
-    response = model.generate_content(prompt)
+    # 2. استعمل موديل أحدث (1.5-flash)
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
-    with st.chat_message("assistant"):
-        st.markdown(response.text)
-    st.session_state.messages.append({"role": "assistant", "content": response.text})
+    try:
+        # صيفط الـ prompt
+        response = model.generate_content(prompt)
+        
+        with st.chat_message("assistant"):
+            if response.text:
+                st.markdown(response.text)
+                st.session_state.messages.append({"role": "assistant", "content": response.text})
+            else:
+                st.warning("السموحة، ماقدرتش نجاوب على هاد السؤال.")
+                
+    except Exception as e:
+        st.error(f"وقع مشكل تقني: {e}")
