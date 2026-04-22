@@ -5,7 +5,7 @@ import google.generativeai as genai
 genai.configure(api_key="YOUR_API_KEY_HERE")
 
 st.title("My AI Assistant 🤖")
-st.write("مرحباً! أنا ذكاء اصطناعي خاص SAID ZIYATI.")
+st.write("مرحباً! أنا ذكاء اصطناعي خاص بسعد الزياتي..")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
