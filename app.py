@@ -31,7 +31,10 @@ if prompt := st.chat_input("Ask me anything..."):
     
     try:
         # صيفط الـ prompt
-        response = model.generate_content(prompt)
+        response =model = genai.GenerativeModel(
+    model_name='gemini-1.5-flash',
+    system_instruction="أنت مساعد ذكاء اصطناعي سميتك مساعد سعد الزياتي. جاوب الناس بالدارجة المغربية وبطريقة مأدبة وظريفة."
+)
         
         with st.chat_message("assistant"):
             if response.text:
