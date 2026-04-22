@@ -35,13 +35,3 @@ if prompt := st.chat_input("Ask me anything..."):
     model_name='gemini-1.5-flash',
     system_instruction="أنت مساعد ذكاء اصطناعي سميتك مساعد سعد الزياتي. جاوب الناس بالدارجة المغربية وبطريقة مأدبة وظريفة."
 )
-        
-        with st.chat_message("assistant"):
-            if response.text:
-                st.markdown(response.text)
-                st.session_state.messages.append({"role": "assistant", "content": response.text})
-            else:
-                st.warning("السموحة، ماقدرتش نجاوب على هاد السؤال.")
-                
-    except Exception as e:
-        st.error(f"وقع مشكل تقني: {e}")
