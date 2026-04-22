@@ -44,4 +44,4 @@ if prompt := st.chat_input("بشنو نقدر نعاونك؟"):
             # سجل جواب البوت ف الذاكرة
             st.session_state.messages.append({"role": "assistant", "content": response.text})
         except Exception as e:
-            st.error("كاين شي مشكل ف الكونيكسيون، حاول مرة أخرى.")
+            st.error("ach tama al5awa.")
